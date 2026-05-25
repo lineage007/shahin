@@ -1,6 +1,31 @@
 // CoinGecko API
 const COINGECKO_API_KEY = process.env.NEXT_PUBLIC_COINGECKO_API_KEY
 
+// Canonical list of tradeable paper-trading assets
+// CoinGecko IDs used for price lookups
+export const TRADEABLE_ASSETS: { id: string; symbol: string; name: string }[] = [
+  { id: 'bitcoin', symbol: 'btc', name: 'Bitcoin' },
+  { id: 'ethereum', symbol: 'eth', name: 'Ethereum' },
+  { id: 'solana', symbol: 'sol', name: 'Solana' },
+  { id: 'avalanche-2', symbol: 'avax', name: 'Avalanche' },
+  { id: 'matic-network', symbol: 'matic', name: 'Polygon' },
+  { id: 'arbitrum', symbol: 'arb', name: 'Arbitrum' },
+  { id: 'optimism', symbol: 'op', name: 'Optimism' },
+  { id: 'polkadot', symbol: 'dot', name: 'Polkadot' },
+  { id: 'cardano', symbol: 'ada', name: 'Cardano' },
+  { id: 'chainlink', symbol: 'link', name: 'Chainlink' },
+  { id: 'uniswap', symbol: 'uni', name: 'Uniswap' },
+  { id: 'aave', symbol: 'aave', name: 'Aave' },
+  { id: 'near', symbol: 'near', name: 'NEAR Protocol' },
+  { id: 'fantom', symbol: 'ftm', name: 'Fantom' },
+  { id: 'cosmos', symbol: 'atom', name: 'Cosmos' },
+  { id: 'injective-protocol', symbol: 'inj', name: 'Injective' },
+  { id: 'celestia', symbol: 'tia', name: 'Celestia' },
+  { id: 'jito-governance-token', symbol: 'jto', name: 'Jito' },
+  { id: 'sui', symbol: 'sui', name: 'Sui' },
+  { id: 'aptos', symbol: 'apt', name: 'Aptos' },
+]
+
 export interface CoinData {
   id: string
   symbol: string
@@ -10,6 +35,34 @@ export interface CoinData {
   market_cap: number
   total_volume: number
   image: string
+}
+
+// Fetch real-time prices for the canonical tradeable asset list
+// Returns a map of { coingecko-id -> price in USD }
+export async function fetchTradeableAssetPrices(): Promise<Record<string, number>> {
+  try {
+    const ids = TRADEABLE_ASSETS.map((a) => a.id).join(',')
+    const headers: HeadersInit = {}
+    if (COINGECKO_API_KEY) {
+      headers['x-cg-demo-api-key'] = COINGECKO_API_KEY
+    }
+    const response = await fetch(
+      `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`,
+      { headers, cache: 'no-store' }
+    )
+    if (!response.ok) throw new Error('Failed to fetch tradeable asset prices')
+    const data = await response.json()
+    const result: Record<string, number> = {}
+    for (const asset of TRADEABLE_ASSETS) {
+      if (data[asset.id]?.usd) {
+        result[asset.id] = data[asset.id].usd
+      }
+    }
+    return result
+  } catch (error) {
+    console.error('Error fetching tradeable asset prices:', error)
+    return {}
+  }
 }
 
 export async function fetchTopCoins(limit: number = 50): Promise<CoinData[]> {

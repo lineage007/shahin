@@ -1,10 +1,22 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from './AuthProvider'
 import { LoginForm } from './LoginForm'
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!user || loading) return
+    // Redirect first-time users to onboarding
+    const done = typeof window !== 'undefined' && localStorage.getItem('shahin_onboarding_complete')
+    if (!done) {
+      router.push('/onboarding')
+    }
+  }, [user, loading, router])
 
   if (loading) {
     return (

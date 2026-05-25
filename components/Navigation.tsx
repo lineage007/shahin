@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useAuth } from './AuthProvider'
-import { LogOut, TrendingUp } from 'lucide-react'
+import { LogOut, TrendingUp, Target, BookOpen } from 'lucide-react'
 
 export function Navigation() {
   const { user, signOut } = useAuth()
@@ -35,6 +35,26 @@ export function Navigation() {
                 className="text-gray-300 hover:text-white transition"
               >
                 Leaderboard
+              </Link>
+              <Link
+                href="/challenge"
+                className="flex items-center gap-1 text-gray-300 hover:text-white transition"
+              >
+                <Target className="h-4 w-4" />
+                Challenge
+              </Link>
+              <Link
+                href="/pricing"
+                className="text-gray-300 hover:text-white transition"
+              >
+                Pricing
+              </Link>
+              <Link
+                href="/sharia"
+                className="flex items-center gap-1 text-gray-300 hover:text-white transition"
+              >
+                <BookOpen className="h-4 w-4" />
+                Sharia
               </Link>
               <button
                 onClick={() => signOut()}

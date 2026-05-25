@@ -145,7 +145,8 @@ export async function executeSell(
   userId: string,
   symbol: string,
   amount: number,
-  price: number
+  price: number,
+  allCurrentPrices: Record<string, number> = {}
 ) {
   // Get holding
   const { data: holding } = await supabase
@@ -192,7 +193,9 @@ export async function executeSell(
   const newPnlTotal = portfolio.pnl_total + profit
   const initialBalance = 100000
   const currentBalance = portfolio.balance_usdt + totalValue
-  const totalValue_portfolio = currentBalance + (await getHoldingsValue(userId, {}))
+  // Pass real-time prices for remaining holdings; sold symbol excluded below
+  const pricesForRemaining = { ...allCurrentPrices, [symbol]: price }
+  const totalValue_portfolio = currentBalance + (await getHoldingsValue(userId, pricesForRemaining, symbol, amount))
   const newPnlPercent = ((totalValue_portfolio - initialBalance) / initialBalance) * 100
 
   // Update balance and stats
@@ -248,14 +251,22 @@ export async function executeSell(
   return { success: true, profit }
 }
 
+// excludeSymbol / excludeAmount: used by executeSell to reflect post-sale state
+// before the DB update has committed
 async function getHoldingsValue(
   userId: string,
-  prices: Record<string, number>
+  prices: Record<string, number>,
+  excludeSymbol?: string,
+  excludeAmount?: number
 ): Promise<number> {
   const holdings = await getHoldings(userId)
   return holdings.reduce((sum, h) => {
     const currentPrice = prices[h.symbol] || h.avg_buy_price
-    return sum + h.amount * currentPrice
+    let effectiveAmount = h.amount
+    if (h.symbol === excludeSymbol && excludeAmount !== undefined) {
+      effectiveAmount = Math.max(0, h.amount - excludeAmount)
+    }
+    return sum + effectiveAmount * currentPrice
   }, 0)
 }
 
@@ -270,9 +281,26 @@ export async function getLeaderboard() {
       )
     `
     )
+    .eq('leaderboard_opt_in', true)
     .order('pnl_percent', { ascending: false })
     .limit(100)
 
   if (error) throw error
   return data || []
+}
+
+export async function updateLeaderboardOptIn(
+  userId: string,
+  optIn: boolean,
+  displayName?: string
+) {
+  const { error } = await supabase
+    .from('portfolios')
+    .update({
+      leaderboard_opt_in: optIn,
+      ...(displayName !== undefined ? { display_name: displayName } : {}),
+    })
+    .eq('user_id', userId)
+
+  if (error) throw error
 }

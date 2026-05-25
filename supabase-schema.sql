@@ -10,9 +10,15 @@ CREATE TABLE IF NOT EXISTS portfolios (
   win_rate DECIMAL DEFAULT 0,
   pnl_total DECIMAL DEFAULT 0,
   pnl_percent DECIMAL DEFAULT 0,
+  leaderboard_opt_in BOOLEAN DEFAULT FALSE,   -- user must explicitly opt in
+  display_name TEXT,                           -- optional pseudonym for leaderboard
   created_at TIMESTAMP DEFAULT NOW(),
   UNIQUE(user_id)
 );
+
+-- Migration: add leaderboard_opt_in and display_name if upgrading existing schema
+ALTER TABLE portfolios ADD COLUMN IF NOT EXISTS leaderboard_opt_in BOOLEAN DEFAULT FALSE;
+ALTER TABLE portfolios ADD COLUMN IF NOT EXISTS display_name TEXT;
 
 -- Trades table
 CREATE TABLE IF NOT EXISTS trades (
@@ -94,6 +100,59 @@ CREATE POLICY "Anyone can view leaderboard"
   ON portfolios FOR SELECT
   USING (true);
 
+-- ============================================================================
+-- PROP CHALLENGE ENGINE (paper mode only)
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS challenges (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  tier_id TEXT NOT NULL,
+  phase SMALLINT NOT NULL DEFAULT 1,
+  status TEXT NOT NULL DEFAULT 'ACTIVE'
+    CHECK (status IN ('PENDING_PAYMENT','PENDING_ACCOUNT','ACTIVE','PASSED','FAILED','PAUSED','CANCELLED','FUNDED','CLOSED','UPGRADED')),
+
+  -- Financial state
+  initial_balance DECIMAL NOT NULL,
+  current_equity DECIMAL NOT NULL,
+  peak_equity DECIMAL NOT NULL,
+  daily_start_equity DECIMAL NOT NULL,
+
+  -- Progress
+  trading_days_count INT NOT NULL DEFAULT 0,
+  start_date TIMESTAMP NOT NULL DEFAULT NOW(),
+  expiry_date TIMESTAMP NOT NULL,
+
+  -- Outcome
+  failure_reason TEXT,
+  passed_at TIMESTAMP,
+  failed_at TIMESTAMP,
+
+  -- Rules snapshot (frozen at challenge start)
+  rules JSONB NOT NULL,
+
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_challenges_user_id ON challenges(user_id);
+CREATE INDEX IF NOT EXISTS idx_challenges_status ON challenges(status);
+
+-- Row Level Security for challenges
+ALTER TABLE challenges ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own challenges"
+  ON challenges FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own challenges"
+  ON challenges FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own challenges"
+  ON challenges FOR UPDATE
+  USING (auth.uid() = user_id);
+
+-- ============================================================================
 -- Function to automatically create portfolio on user signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$

@@ -5,6 +5,7 @@ import { useAuth } from './AuthProvider'
 import { executeBuy, executeSell, getPortfolio, getHoldings } from '@/lib/trading'
 import type { CoinData } from '@/lib/api'
 import { ArrowUpCircle, ArrowDownCircle } from 'lucide-react'
+import { TradeEducationOverlay } from './TradeEducationOverlay'
 
 interface TradeFormProps {
   coin: CoinData
@@ -19,6 +20,12 @@ export function TradeForm({ coin }: TradeFormProps) {
   const [success, setSuccess] = useState('')
   const [balance, setBalance] = useState(0)
   const [holding, setHolding] = useState(0)
+  const [overlay, setOverlay] = useState<{
+    action: 'buy' | 'sell'
+    amount: number
+    price: number
+    profit?: number
+  } | null>(null)
 
   useEffect(() => {
     loadBalances()
@@ -54,9 +61,13 @@ export function TradeForm({ coin }: TradeFormProps) {
       if (action === 'buy') {
         await executeBuy(user!.id, coin.id, amountNum, coin.current_price)
         setSuccess(`Successfully bought ${amountNum} ${coin.symbol.toUpperCase()}`)
+        setOverlay({ action: 'buy', amount: amountNum, price: coin.current_price })
       } else {
-        await executeSell(user!.id, coin.id, amountNum, coin.current_price)
+        // Pass { [coin.id]: coin.current_price } so executeSell uses real-time
+        // price rather than avg_buy_price for the remaining portfolio valuation
+        const result = await executeSell(user!.id, coin.id, amountNum, coin.current_price, { [coin.id]: coin.current_price })
         setSuccess(`Successfully sold ${amountNum} ${coin.symbol.toUpperCase()}`)
+        setOverlay({ action: 'sell', amount: amountNum, price: coin.current_price, profit: result.profit })
       }
 
       setAmount('')
@@ -71,6 +82,17 @@ export function TradeForm({ coin }: TradeFormProps) {
   const totalCost = parseFloat(amount || '0') * coin.current_price
 
   return (
+    <>
+    {overlay && (
+      <TradeEducationOverlay
+        action={overlay.action}
+        symbol={coin.symbol}
+        amount={overlay.amount}
+        price={overlay.price}
+        profit={overlay.profit}
+        onDismiss={() => setOverlay(null)}
+      />
+    )}
     <div className="bg-gray-950 border border-gray-800 rounded-lg p-4">
       <div className="mb-4">
         <h3 className="font-semibold mb-4">Place Order</h3>
@@ -171,5 +193,6 @@ export function TradeForm({ coin }: TradeFormProps) {
         </form>
       </div>
     </div>
+    </>
   )
 }
