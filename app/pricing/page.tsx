@@ -35,7 +35,6 @@ const TIERS = [
       '2-Phase challenge structure',
       'Phase progression tracking',
       '80–95% profit split on pass',
-      'Sharia-framework account option',
     ],
     note: 'Challenge fees are indicative. No real payment accepted until ADGM FSP authorisation is in place. Currently in paper mode — join the waitlist.',
     cta: 'Join Challenge Waitlist',
@@ -202,8 +201,6 @@ export default function PricingPage() {
             This is not financial advice.
           </p>
           <div className="flex justify-center gap-6 mt-4 text-xs text-gray-600">
-            <Link href="/sharia" className="hover:text-gray-400 transition">Sharia Framework</Link>
-            <span>|</span>
             <Link href="/challenge" className="hover:text-gray-400 transition">Challenge Dashboard</Link>
           </div>
         </div>
