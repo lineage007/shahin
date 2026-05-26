@@ -36,7 +36,6 @@ export interface ChallengeRules {
   maxTotalExposurePercent: number     // e.g. 100
   allowWeekendHolding: boolean
   maxCalendarDays: number
-  shariaCompliant: boolean
   noOvernightSwaps: boolean
   spotOnly: boolean
 }
@@ -51,7 +50,6 @@ export interface ChallengeTier {
   phase2Rules: ChallengeRules | null  // null for 1-PHASE and INSTANT
   profitSplit: number                 // percentage to trader, e.g. 85
   maxLeverage: number
-  shariaVariant: boolean
 }
 
 export interface Challenge {
@@ -96,7 +94,7 @@ export const CHALLENGE_TIERS: ChallengeTier[] = [
     baseFeeUsd: 199,
     profitSplit: 80,
     maxLeverage: 20,
-    shariaVariant: false,
+  
     phase1Rules: {
       profitTargetPercent: 8,
       minTradingDays: 5,
@@ -107,7 +105,7 @@ export const CHALLENGE_TIERS: ChallengeTier[] = [
       maxTotalExposurePercent: 100,
       allowWeekendHolding: false,
       maxCalendarDays: 30,
-      shariaCompliant: false,
+
       noOvernightSwaps: false,
       spotOnly: false,
     },
@@ -121,7 +119,7 @@ export const CHALLENGE_TIERS: ChallengeTier[] = [
       maxTotalExposurePercent: 100,
       allowWeekendHolding: false,
       maxCalendarDays: 60,
-      shariaCompliant: false,
+
       noOvernightSwaps: false,
       spotOnly: false,
     },
@@ -134,7 +132,7 @@ export const CHALLENGE_TIERS: ChallengeTier[] = [
     baseFeeUsd: 349,
     profitSplit: 85,
     maxLeverage: 20,
-    shariaVariant: false,
+  
     phase1Rules: {
       profitTargetPercent: 8,
       minTradingDays: 5,
@@ -145,7 +143,7 @@ export const CHALLENGE_TIERS: ChallengeTier[] = [
       maxTotalExposurePercent: 100,
       allowWeekendHolding: false,
       maxCalendarDays: 30,
-      shariaCompliant: false,
+
       noOvernightSwaps: false,
       spotOnly: false,
     },
@@ -159,7 +157,7 @@ export const CHALLENGE_TIERS: ChallengeTier[] = [
       maxTotalExposurePercent: 100,
       allowWeekendHolding: false,
       maxCalendarDays: 60,
-      shariaCompliant: false,
+
       noOvernightSwaps: false,
       spotOnly: false,
     },
@@ -172,7 +170,7 @@ export const CHALLENGE_TIERS: ChallengeTier[] = [
     baseFeeUsd: 549,
     profitSplit: 85,
     maxLeverage: 10,
-    shariaVariant: false,
+  
     phase1Rules: {
       profitTargetPercent: 8,
       minTradingDays: 5,
@@ -183,7 +181,7 @@ export const CHALLENGE_TIERS: ChallengeTier[] = [
       maxTotalExposurePercent: 100,
       allowWeekendHolding: false,
       maxCalendarDays: 30,
-      shariaCompliant: false,
+
       noOvernightSwaps: false,
       spotOnly: false,
     },
@@ -197,7 +195,7 @@ export const CHALLENGE_TIERS: ChallengeTier[] = [
       maxTotalExposurePercent: 100,
       allowWeekendHolding: false,
       maxCalendarDays: 60,
-      shariaCompliant: false,
+
       noOvernightSwaps: false,
       spotOnly: false,
     },
@@ -210,7 +208,7 @@ export const CHALLENGE_TIERS: ChallengeTier[] = [
     baseFeeUsd: 999,
     profitSplit: 90,
     maxLeverage: 10,
-    shariaVariant: false,
+  
     phase1Rules: {
       profitTargetPercent: 8,
       minTradingDays: 5,
@@ -221,7 +219,7 @@ export const CHALLENGE_TIERS: ChallengeTier[] = [
       maxTotalExposurePercent: 100,
       allowWeekendHolding: false,
       maxCalendarDays: 30,
-      shariaCompliant: false,
+
       noOvernightSwaps: false,
       spotOnly: false,
     },
@@ -235,7 +233,7 @@ export const CHALLENGE_TIERS: ChallengeTier[] = [
       maxTotalExposurePercent: 100,
       allowWeekendHolding: false,
       maxCalendarDays: 60,
-      shariaCompliant: false,
+
       noOvernightSwaps: false,
       spotOnly: false,
     },
