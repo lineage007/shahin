@@ -7,8 +7,37 @@ import { Navigation } from '@/components/Navigation'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Shahin - Crypto Prop Trading',
-  description: 'Paper trading platform for cryptocurrency markets',
+  title: 'Shahin - Crypto Prop Trading Challenge',
+  description:
+    'Paper-trade the top cryptocurrencies against live market data. Practice two-phase prop-firm challenge rules with real drawdown, daily-loss, and profit targets — no real money required.',
+  metadataBase: new URL('https://shahin.app'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'Shahin — Crypto Prop Trading Challenge',
+    description:
+      'Trade the top 20 cryptocurrencies with live prices and real prop-firm rules. Paper only. No capital at risk.',
+    url: 'https://shahin.app',
+    siteName: 'Shahin',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Shahin crypto prop trading platform',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Shahin — Crypto Prop Trading Challenge',
+    description:
+      'Trade top cryptos with live prices and prop-firm rules. Paper mode only.',
+    images: ['/og-image.png'],
+  },
 }
 
 export default function RootLayout({

@@ -10,7 +10,7 @@ import { evaluateChallenge, isWeekendHoldingViolation } from './engine'
 // ────────────────────────────────────────────────────────────
 
 // Map Supabase snake_case row → camelCase Challenge object
-function rowToChallenge(row: Record<string, unknown>): Challenge {
+function rowToChallenge(row: Record<string, unknown>): Challenge & { lastTradeDate?: string | null } {
   return {
     id: row.id as string,
     userId: row.user_id as string,
@@ -22,6 +22,7 @@ function rowToChallenge(row: Record<string, unknown>): Challenge {
     peakEquity: row.peak_equity as number,
     dailyStartEquity: row.daily_start_equity as number,
     tradingDaysCount: row.trading_days_count as number,
+    lastTradeDate: (row.last_trade_date as string | null) ?? null,  // F7: per-day counting
     startDate: row.start_date as string,
     expiryDate: row.expiry_date as string,
     failureReason: row.failure_reason as Challenge['failureReason'],
@@ -85,7 +86,8 @@ export async function updateChallengeEquity(
   challengeId: string,
   currentEquity: number,
   peakEquity: number,
-  tradingDaysCount: number
+  tradingDaysCount: number,
+  lastTradeDate?: string | null
 ): Promise<void> {
   const { error } = await supabase
     .from('challenges')
@@ -93,6 +95,7 @@ export async function updateChallengeEquity(
       current_equity: currentEquity,
       peak_equity: Math.max(peakEquity, currentEquity),
       trading_days_count: tradingDaysCount,
+      ...(lastTradeDate !== undefined ? { last_trade_date: lastTradeDate } : {}),
     })
     .eq('id', challengeId)
   if (error) throw error
@@ -130,13 +133,19 @@ export async function onPaperTradeExecuted(
   newEquity: number,
   hasOpenPositions: boolean
 ): Promise<{ action: string; reason?: string }> {
-  const challenge = await getActiveChallenge(userId)
+  const challenge = await getActiveChallenge(userId) as (Challenge & { lastTradeDate?: string | null }) | null
   if (!challenge) return { action: 'NO_CHALLENGE' }
+
+  // F7 — increment trading_days_count only when today is a new calendar day
+  const todayUtc = new Date().toISOString().slice(0, 10) // "YYYY-MM-DD"
+  const isNewDay = !challenge.lastTradeDate || challenge.lastTradeDate !== todayUtc
+  const newTradingDaysCount = challenge.tradingDaysCount + (isNewDay ? 1 : 0)
+  const newLastTradeDate = isNewDay ? todayUtc : challenge.lastTradeDate
 
   const evaluation = evaluateChallenge(
     challenge,
     newEquity,
-    challenge.tradingDaysCount + 1,  // increment; full impl would count distinct days
+    newTradingDaysCount,
     challenge.dailyStartEquity,
     challenge.peakEquity
   )
@@ -151,7 +160,8 @@ export async function onPaperTradeExecuted(
     challenge.id,
     newEquity,
     Math.max(challenge.peakEquity, newEquity),
-    challenge.tradingDaysCount + 1
+    newTradingDaysCount,
+    newLastTradeDate
   )
 
   if (evaluation.action === 'PASS_CHALLENGE') {

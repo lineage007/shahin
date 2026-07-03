@@ -1,5 +1,10 @@
 // CoinGecko API
-const COINGECKO_API_KEY = process.env.NEXT_PUBLIC_COINGECKO_API_KEY
+// F10 fix: COINGECKO_API_KEY (no NEXT_PUBLIC_ prefix) is server-only.
+// Client-side callers should use the /api/prices proxy route instead of
+// calling CoinGecko directly, to avoid exposing the key in the browser bundle.
+// The functions below are used server-side (in API routes / Server Components).
+// Do not add NEXT_PUBLIC_COINGECKO_API_KEY back — it leaks the key to the bundle.
+const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY
 
 // Canonical list of tradeable paper-trading assets
 // CoinGecko IDs used for price lookups
@@ -39,6 +44,10 @@ export interface CoinData {
 
 // Fetch real-time prices for the canonical tradeable asset list
 // Returns a map of { coingecko-id -> price in USD }
+//
+// SERVER-SIDE ONLY: uses COINGECKO_API_KEY (no NEXT_PUBLIC_ prefix).
+// Client components should call fetchTradeableAssetPricesClient() instead,
+// which routes through /api/prices to keep the key out of the browser.
 export async function fetchTradeableAssetPrices(): Promise<Record<string, number>> {
   try {
     const ids = TRADEABLE_ASSETS.map((a) => a.id).join(',')
@@ -65,6 +74,31 @@ export async function fetchTradeableAssetPrices(): Promise<Record<string, number
   }
 }
 
+// CLIENT-SAFE price fetcher: routes through /api/prices proxy (F10 fix).
+// Use this in client components ('use client') instead of calling CoinGecko directly.
+export async function fetchTradeableAssetPricesClient(): Promise<Record<string, number>> {
+  try {
+    const ids = TRADEABLE_ASSETS.map((a) => a.id).join(',')
+    const response = await fetch(
+      `/api/prices?endpoint=simple%2Fprice&ids=${ids}&vs_currencies=usd`,
+      { cache: 'no-store' }
+    )
+    if (!response.ok) throw new Error('Failed to fetch prices via proxy')
+    const data = await response.json()
+    const result: Record<string, number> = {}
+    for (const asset of TRADEABLE_ASSETS) {
+      if (data[asset.id]?.usd) {
+        result[asset.id] = data[asset.id].usd
+      }
+    }
+    return result
+  } catch (error) {
+    console.error('Error fetching tradeable asset prices (client):', error)
+    return {}
+  }
+}
+
+// SERVER-SIDE ONLY — uses server-only COINGECKO_API_KEY.
 export async function fetchTopCoins(limit: number = 50): Promise<CoinData[]> {
   try {
     const headers: HeadersInit = {}

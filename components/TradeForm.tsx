@@ -2,13 +2,26 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from './AuthProvider'
-import { executeBuy, executeSell, getPortfolio, getHoldings } from '@/lib/trading'
+import { getPortfolio, getHoldings } from '@/lib/trading'
+import { getSupabase } from '@/lib/supabase'
 import type { CoinData } from '@/lib/api'
-import { ArrowUpCircle, ArrowDownCircle } from 'lucide-react'
+import { ArrowUpCircle, ArrowDownCircle, AlertTriangle, CheckCircle } from 'lucide-react'
 import { TradeEducationOverlay } from './TradeEducationOverlay'
+
+// F2 / F3 / F4 / F10 fixes:
+// All trade execution now goes through the /api/trade server-side route, which:
+//   - Fetches the canonical price from CoinGecko server-side (ignores client price)
+//   - Uses atomic Postgres RPCs to prevent balance overdraw (TOCTOU race)
+//   - Calls onPaperTradeExecuted() to enforce active challenge rules
+//   - Never exposes the CoinGecko API key to the browser
 
 interface TradeFormProps {
   coin: CoinData
+}
+
+interface ChallengeResult {
+  action: string
+  reason?: string
 }
 
 export function TradeForm({ coin }: TradeFormProps) {
@@ -20,6 +33,7 @@ export function TradeForm({ coin }: TradeFormProps) {
   const [success, setSuccess] = useState('')
   const [balance, setBalance] = useState(0)
   const [holding, setHolding] = useState(0)
+  const [challengeAlert, setChallengeAlert] = useState<ChallengeResult | null>(null)
   const [overlay, setOverlay] = useState<{
     action: 'buy' | 'sell'
     amount: number
@@ -50,6 +64,7 @@ export function TradeForm({ coin }: TradeFormProps) {
     e.preventDefault()
     setError('')
     setSuccess('')
+    setChallengeAlert(null)
     setLoading(true)
 
     try {
@@ -58,28 +73,63 @@ export function TradeForm({ coin }: TradeFormProps) {
         throw new Error('Invalid amount')
       }
 
+      // Get the current auth token to pass to the server route for identity verification
+      const { data: { session } } = await getSupabase().auth.getSession()
+      if (!session?.access_token) {
+        throw new Error('Session expired — please sign in again')
+      }
+
+      // Call server-side trade route (F2 — server fetches canonical price)
+      const res = await fetch('/api/trade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action,
+          coinId: coin.id,
+          amount: amountNum,
+          userId: user!.id,
+          authToken: session.access_token,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Trade failed')
+      }
+
+      const executedPrice: number = data.executedPrice
+
       if (action === 'buy') {
-        await executeBuy(user!.id, coin.id, amountNum, coin.current_price)
-        setSuccess(`Successfully bought ${amountNum} ${coin.symbol.toUpperCase()}`)
-        setOverlay({ action: 'buy', amount: amountNum, price: coin.current_price })
+        setSuccess(
+          `Bought ${amountNum} ${coin.symbol.toUpperCase()} at $${executedPrice.toLocaleString()} (server price)`
+        )
+        setOverlay({ action: 'buy', amount: amountNum, price: executedPrice })
       } else {
-        // Pass { [coin.id]: coin.current_price } so executeSell uses real-time
-        // price rather than avg_buy_price for the remaining portfolio valuation
-        const result = await executeSell(user!.id, coin.id, amountNum, coin.current_price, { [coin.id]: coin.current_price })
-        setSuccess(`Successfully sold ${amountNum} ${coin.symbol.toUpperCase()}`)
-        setOverlay({ action: 'sell', amount: amountNum, price: coin.current_price, profit: result.profit })
+        const profit: number = data.profit ?? 0
+        setSuccess(
+          `Sold ${amountNum} ${coin.symbol.toUpperCase()} at $${executedPrice.toLocaleString()} (server price)`
+        )
+        setOverlay({ action: 'sell', amount: amountNum, price: executedPrice, profit })
+      }
+
+      // Surface challenge result (F4)
+      if (data.challengeResult && data.challengeResult.action !== 'NO_CHALLENGE') {
+        setChallengeAlert(data.challengeResult)
       }
 
       setAmount('')
       await loadBalances()
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unknown error'
+      setError(message)
     } finally {
       setLoading(false)
     }
   }
 
-  const totalCost = parseFloat(amount || '0') * coin.current_price
+  // Show estimated total using the displayed coin price (for UX only; server price is authoritative)
+  const estimatedTotal = parseFloat(amount || '0') * coin.current_price
 
   return (
     <>
@@ -155,15 +205,18 @@ export function TradeForm({ coin }: TradeFormProps) {
             <label className="block text-sm text-gray-400 mb-2">Price (USDT)</label>
             <input
               type="text"
-              value={`$${coin.current_price.toLocaleString()}`}
+              value={`$${coin.current_price.toLocaleString()} (indicative)`}
               disabled
               className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-400"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Execution price is fetched server-side at submission time.
+            </p>
           </div>
 
           <div className="flex justify-between text-sm p-3 bg-gray-900 rounded-lg">
-            <span className="text-gray-400">Total:</span>
-            <span className="font-semibold">${totalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+            <span className="text-gray-400">Estimated Total:</span>
+            <span className="font-semibold">${estimatedTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
           </div>
 
           {error && (
@@ -174,7 +227,22 @@ export function TradeForm({ coin }: TradeFormProps) {
 
           {success && (
             <div className="p-3 bg-green-500/10 border border-green-500 rounded-lg text-green-500 text-sm">
+              <CheckCircle className="inline h-4 w-4 mr-1" />
               {success}
+            </div>
+          )}
+
+          {/* Challenge rule result banner (F4) */}
+          {challengeAlert && challengeAlert.action === 'PASS' && (
+            <div className="p-3 bg-yellow-500/10 border border-yellow-500 rounded-lg text-yellow-400 text-sm">
+              <CheckCircle className="inline h-4 w-4 mr-1" />
+              Challenge passed! {challengeAlert.reason}
+            </div>
+          )}
+          {challengeAlert && challengeAlert.action === 'FAIL' && (
+            <div className="p-3 bg-red-500/10 border border-red-500 rounded-lg text-red-400 text-sm">
+              <AlertTriangle className="inline h-4 w-4 mr-1" />
+              Challenge failed: {challengeAlert.reason}
             </div>
           )}
 

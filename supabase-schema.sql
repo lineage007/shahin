@@ -95,10 +95,13 @@ CREATE POLICY "Users can delete their own holdings"
   ON holdings FOR DELETE
   USING (auth.uid() = user_id);
 
--- Public leaderboard view (read-only)
+-- Public leaderboard view — only opted-in rows are readable by anon/public callers.
+-- CRITICAL FIX (2026-07-03): changed USING (true) → USING (leaderboard_opt_in = true)
+-- to prevent all portfolio rows being exposed to unauthenticated callers.
+-- See migrations/001_fix_rls_leaderboard_policy.sql for the incremental migration.
 CREATE POLICY "Anyone can view leaderboard"
   ON portfolios FOR SELECT
-  USING (true);
+  USING (leaderboard_opt_in = true);
 
 -- ============================================================================
 -- PROP CHALLENGE ENGINE (paper mode only)
@@ -120,6 +123,7 @@ CREATE TABLE IF NOT EXISTS challenges (
 
   -- Progress
   trading_days_count INT NOT NULL DEFAULT 0,
+  last_trade_date DATE,  -- tracks last calendar day a trade was placed; NULL = no trade yet
   start_date TIMESTAMP NOT NULL DEFAULT NOW(),
   expiry_date TIMESTAMP NOT NULL,
 

@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Allow: /leaderboard
+Allow: /pricing
+Disallow: /api/
+Disallow: /auth/
+Disallow: /onboarding
+Disallow: /portfolio
+Disallow: /challenge
+
+Sitemap: https://shahin.app/sitemap.xml

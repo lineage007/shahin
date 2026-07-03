@@ -12,9 +12,7 @@ interface LeaderboardEntry {
   win_rate: number
   pnl_total: number
   pnl_percent: number
-  user: {
-    email: string
-  }
+  display_name: string | null  // F8: removed auth.users join; display_name lives on portfolios row
 }
 
 export function LeaderboardView() {
@@ -103,11 +101,12 @@ export function LeaderboardView() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
+                          {/* F8 fix: use display_name (pseudonym); fall back to anonymised user_id prefix */}
                           <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-sm font-bold">
-                            {entry.user.email[0].toUpperCase()}
+                            {(entry.display_name ?? entry.user_id).charAt(0).toUpperCase()}
                           </div>
                           <span className="font-semibold">
-                            {entry.user.email.split('@')[0]}
+                            {entry.display_name ?? `Trader-${entry.user_id.slice(0, 6)}`}
                           </span>
                         </div>
                       </td>

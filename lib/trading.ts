@@ -271,15 +271,13 @@ async function getHoldingsValue(
 }
 
 export async function getLeaderboard() {
+  // F8 fix: removed auth.users join — anon key cannot query auth.users and the
+  // join silently returns null, crashing LeaderboardView when it reads entry.user.email.
+  // display_name (pseudonym) and user_id are both on the portfolios row itself.
   const { data, error } = await supabase
     .from('portfolios')
     .select(
-      `
-      *,
-      user:user_id (
-        email
-      )
-    `
+      'id, user_id, balance_usdt, total_trades, win_rate, pnl_total, pnl_percent, display_name'
     )
     .eq('leaderboard_opt_in', true)
     .order('pnl_percent', { ascending: false })
