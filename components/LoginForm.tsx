@@ -24,8 +24,8 @@ export function LoginForm() {
       } else {
         await signIn(email, password)
       }
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -36,8 +36,8 @@ export function LoginForm() {
     setLoading(true)
     try {
       await signInWithGoogle()
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
       setLoading(false)
     }
   }

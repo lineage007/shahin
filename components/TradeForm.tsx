@@ -41,10 +41,6 @@ export function TradeForm({ coin }: TradeFormProps) {
     profit?: number
   } | null>(null)
 
-  useEffect(() => {
-    loadBalances()
-  }, [user, coin.id])
-
   const loadBalances = async () => {
     if (!user) return
 
@@ -59,6 +55,10 @@ export function TradeForm({ coin }: TradeFormProps) {
       console.error('Error loading balances:', err)
     }
   }
+
+  useEffect(() => {
+    loadBalances()
+  }, [user, coin.id])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

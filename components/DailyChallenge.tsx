@@ -89,7 +89,7 @@ export function DailyChallenge() {
     <div className="bg-gray-900/50 border border-yellow-500/20 rounded-lg p-6">
       <div className="flex items-center gap-2 mb-4">
         <Target className="h-5 w-5 text-yellow-400" />
-        <h2 className="text-xl font-bold text-yellow-400">Today's Market Mover</h2>
+        <h2 className="text-xl font-bold text-yellow-400">Today&apos;s Market Mover</h2>
       </div>
 
       <p className="text-gray-300 mb-4">

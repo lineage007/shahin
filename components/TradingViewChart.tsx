@@ -16,8 +16,9 @@ export function TradingViewChart({ symbol }: TradingViewChartProps) {
     script.src = 'https://s3.tradingview.com/tv.js'
     script.async = true
     script.onload = () => {
-      if (typeof (window as any).TradingView !== 'undefined') {
-        new (window as any).TradingView.widget({
+      const tv = (window as unknown as { TradingView?: { widget: new (opts: Record<string, unknown>) => unknown } }).TradingView
+      if (tv) {
+        new tv.widget({
           container_id: containerRef.current?.id,
           autosize: true,
           symbol: `BINANCE:${symbol.toUpperCase()}USDT`,
