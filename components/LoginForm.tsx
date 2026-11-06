@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useAuth } from './AuthProvider'
+import { isSupabaseConfigured } from '@/lib/supabase'
 import { TrendingUp } from 'lucide-react'
 
 export function LoginForm() {
@@ -10,17 +12,19 @@ export function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setNotice('')
     setLoading(true)
 
     try {
       if (isSignUp) {
         await signUp(email, password)
-        alert('Check your email for verification link!')
+        setNotice('Check your email for a link to verify your account.')
       } else {
         await signIn(email, password)
       }
@@ -42,6 +46,26 @@ export function LoginForm() {
     }
   }
 
+  if (!isSupabaseConfigured()) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <div className="w-full max-w-md rounded-2xl border border-gray-800 bg-gray-900/50 p-8 text-center">
+          <h2 className="mb-3 text-xl font-semibold">Accounts are not open yet</h2>
+          <p className="mb-6 text-sm leading-6 text-gray-400">
+            Sign-in and new accounts are not available at the moment, so the trading dashboard cannot be
+            opened. You can read the planned challenge format and rules on the pricing page.
+          </p>
+          <Link
+            href="/pricing"
+            className="inline-block rounded-lg bg-blue-600 px-5 py-3 font-semibold transition hover:bg-blue-700"
+          >
+            View pricing and rules
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-black">
       <div className="w-full max-w-md p-8">
@@ -57,11 +81,13 @@ export function LoginForm() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="login-email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email
               </label>
               <input
+                id="login-email"
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -70,11 +96,13 @@ export function LoginForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="login-password" className="block text-sm font-medium text-gray-300 mb-2">
                 Password
               </label>
               <input
+                id="login-password"
                 type="password"
+                autoComplete={isSignUp ? 'new-password' : 'current-password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -82,8 +110,14 @@ export function LoginForm() {
               />
             </div>
 
+            {notice && (
+              <div role="status" className="p-3 bg-green-500/10 border border-green-500 rounded-lg text-green-400 text-sm">
+                {notice}
+              </div>
+            )}
+
             {error && (
-              <div className="p-3 bg-red-500/10 border border-red-500 rounded-lg text-red-500 text-sm">
+              <div role="alert" className="p-3 bg-red-500/10 border border-red-500 rounded-lg text-red-500 text-sm">
                 {error}
               </div>
             )}
