@@ -37,6 +37,7 @@ export function LoginForm() {
 
   const handleGoogleSignIn = async () => {
     setError('')
+    setNotice('')
     setLoading(true)
     try {
       await signInWithGoogle()
@@ -169,7 +170,11 @@ export function LoginForm() {
           <p className="text-center text-sm text-gray-400 mt-6">
             {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
             <button
-              onClick={() => setIsSignUp(!isSignUp)}
+              onClick={() => {
+                setIsSignUp(!isSignUp)
+                setError('')
+                setNotice('')
+              }}
               className="text-blue-500 hover:text-blue-400 font-semibold"
             >
               {isSignUp ? 'Sign In' : 'Sign Up'}
