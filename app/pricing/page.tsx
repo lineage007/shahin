@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { CheckCircle, AlertTriangle, Lock } from 'lucide-react'
+import { CheckCircle, Circle, AlertTriangle, Lock } from 'lucide-react'
 
 const TIERS = [
   {
@@ -107,10 +107,17 @@ export default function PricingPage() {
                 <span className="text-sm text-gray-500 ml-2">{tier.period}</span>
               </div>
               <p className="text-sm text-gray-400 mb-6">{tier.description}</p>
+              {!tier.available && (
+                <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Planned features</p>
+              )}
               <ul className="space-y-2 mb-6 flex-1">
                 {tier.features.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm">
-                    <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                    {tier.available ? (
+                      <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                    ) : (
+                      <Circle className="h-4 w-4 text-gray-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                    )}
                     <span className="text-gray-300">{f}</span>
                   </li>
                 ))}

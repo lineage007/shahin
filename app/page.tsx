@@ -9,7 +9,7 @@ const features = [
   {
     title: 'Two-phase prop challenges',
     description:
-      'Practice against clear drawdown, profit target, and minimum trading-day rules before moving toward funded-style evaluation.',
+      'Practice against clear drawdown, profit target, and minimum trading-day rules used in prop-firm evaluations.',
     icon: Trophy,
   },
   {
@@ -44,7 +44,7 @@ export default function HomePage() {
             can test discipline under conditions that mirror funded account evaluations. Traders can monitor
             major coins, review sentiment, place simulated trades, and work toward structured targets without
             financial exposure. Shahin is paper trading only. Paid challenges, funded accounts and payouts are
-            not offered. Sign in or create a free account below to follow markets and practice execution.
+            not offered. Create a free account to follow markets and practice execution.
           </p>
         </div>
 

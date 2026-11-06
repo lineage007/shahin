@@ -66,7 +66,7 @@ export function TradeEducationOverlay({
 
         <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg mb-4">
           <p className="text-xs text-blue-400 font-medium">
-            This is paper trading. No real money is involved. Use this to practice strategy before real markets.
+            This is paper trading. No real money is involved. Use it to practice strategy with virtual funds.
           </p>
         </div>
 

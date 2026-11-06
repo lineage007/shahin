@@ -93,7 +93,7 @@ export function ChallengeDashboard() {
       <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex gap-3">
         <AlertTriangle className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
         <div className="text-sm text-yellow-400/90">
-          <p className="font-semibold mb-1">Simulated funded accounts only</p>
+          <p className="font-semibold mb-1">Paper challenges only</p>
           <p>
             All challenge trading uses paper (virtual) capital. Fees and profit splits shown are planned
             figures only and may change. Nothing is charged or paid out. Crypto markets are highly volatile
