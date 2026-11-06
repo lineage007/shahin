@@ -52,6 +52,7 @@ export function Navigation() {
             ))}
             {user && (
               <button
+                type="button"
                 onClick={() => signOut()}
                 className="flex items-center gap-2 text-gray-300 transition hover:text-white"
               >
@@ -69,7 +70,7 @@ export function Navigation() {
             aria-controls="mobile-menu"
             onClick={() => setOpen((v) => !v)}
           >
-            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {open ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
           </button>
         </div>
 
@@ -89,6 +90,7 @@ export function Navigation() {
             ))}
             {user && (
               <button
+                type="button"
                 onClick={() => {
                   setOpen(false)
                   signOut()
