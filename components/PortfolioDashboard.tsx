@@ -15,10 +15,6 @@ export function PortfolioDashboard() {
   const [coins, setCoins] = useState<Record<string, CoinData>>({})
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    loadData()
-  }, [user])
-
   const loadData = async () => {
     if (!user) return
 
@@ -45,6 +41,10 @@ export function PortfolioDashboard() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadData()
+  }, [user])
 
   if (loading) {
     return (

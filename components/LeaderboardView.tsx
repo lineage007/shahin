@@ -19,6 +19,17 @@ export function LeaderboardView() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [loading, setLoading] = useState(true)
 
+  const loadLeaderboard = async () => {
+    try {
+      const data = await getLeaderboard()
+      setLeaderboard(data as LeaderboardEntry[])
+    } catch (err) {
+      console.error('Error loading leaderboard:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     loadLeaderboard()
 
@@ -26,17 +37,6 @@ export function LeaderboardView() {
     const interval = setInterval(loadLeaderboard, 300000)
     return () => clearInterval(interval)
   }, [])
-
-  const loadLeaderboard = async () => {
-    try {
-      const data = await getLeaderboard()
-      setLeaderboard(data as any)
-    } catch (err) {
-      console.error('Error loading leaderboard:', err)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   if (loading) {
     return (
