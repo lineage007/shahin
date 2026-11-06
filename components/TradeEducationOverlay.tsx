@@ -13,9 +13,9 @@ interface TradeEducationOverlayProps {
 
 function getBuyExplanation(symbol: string, amount: number, price: number): string {
   const total = (amount * price).toLocaleString(undefined, { maximumFractionDigits: 2 })
-  return `You bought ${amount} ${symbol.toUpperCase()} at $${price.toLocaleString(undefined, { maximumFractionDigits: 4 })} — paying $${total} USDT. ` +
+  return `You bought ${amount} ${symbol.toUpperCase()} at $${price.toLocaleString(undefined, { maximumFractionDigits: 4 })}, paying $${total} USDT. ` +
     `Your position profits when ${symbol.toUpperCase()} price rises above your entry. ` +
-    `This is a "long" position — you are betting on upward price movement.`
+    `This is a "long" position: you are betting on upward price movement.`
 }
 
 function getSellExplanation(symbol: string, amount: number, price: number, profit: number): string {
@@ -26,7 +26,7 @@ function getSellExplanation(symbol: string, amount: number, price: number, profi
   return `You sold ${amount} ${symbol.toUpperCase()} at $${price.toLocaleString(undefined, { maximumFractionDigits: 4 })}, ` +
     `closing your position for ${profitStr}. ` +
     `You sold ${direction} your average buy price, which ${profit >= 0 ? 'realised a gain' : 'realised a loss'}. ` +
-    `${profit < 0 ? 'Losses are part of trading — what matters is your risk management and overall win rate over time.' : 'Well-timed exits lock in gains and free capital for the next trade.'}`
+    `${profit < 0 ? 'Losses are part of trading. What matters is your risk management and overall win rate over time.' : 'Well-timed exits lock in gains and free capital for the next trade.'}`
 }
 
 export function TradeEducationOverlay({
@@ -66,14 +66,14 @@ export function TradeEducationOverlay({
 
         <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg mb-4">
           <p className="text-xs text-blue-400 font-medium">
-            This is paper trading — no real money is involved. Use this to practice strategy before real markets.
+            This is paper trading. No real money is involved. Use this to practice strategy before real markets.
           </p>
         </div>
 
         <div className="p-3 bg-yellow-500/5 border border-yellow-500/20 rounded-lg mb-4">
           <p className="text-xs text-yellow-500/80">
             Crypto markets are highly volatile. Past performance does not predict future returns.
-            This is not financial advice. ADGM FSP application in progress.
+            This is not financial advice.
           </p>
         </div>
 

@@ -21,7 +21,7 @@ const features = [
   {
     title: 'Paper-first risk controls',
     description:
-      'Trade in simulation mode while Shahin develops the compliance pathway required for regulated real-money activity.',
+      'Every trade runs in simulation with virtual funds. No real money is deposited, traded or paid out.',
     icon: ShieldCheck,
   },
 ]
@@ -43,10 +43,8 @@ export default function HomePage() {
             market data, paper trading tools, leaderboard mechanics, and challenge-style risk limits so users
             can test discipline under conditions that mirror funded account evaluations. Traders can monitor
             major coins, review sentiment, place simulated trades, and work toward structured targets without
-            financial exposure. Shahin is currently paper trading only while the ADGM FSP application is in
-            progress; challenge fees, payouts, and account upgrades are indicative until authorisation is in
-            place. Join the waitlist or sign in to follow markets, practice execution, and prepare for the
-            next phase of crypto prop trading.
+            financial exposure. Shahin is paper trading only. Paid challenges, funded accounts and payouts are
+            not offered. Sign in or create a free account below to follow markets and practice execution.
           </p>
         </div>
 

@@ -76,7 +76,7 @@ export function TradeForm({ coin }: TradeFormProps) {
       // Get the current auth token to pass to the server route for identity verification
       const { data: { session } } = await getSupabase().auth.getSession()
       if (!session?.access_token) {
-        throw new Error('Session expired — please sign in again')
+        throw new Error('Session expired. Please sign in again.')
       }
 
       // Call server-side trade route (F2 — server fetches canonical price)
