@@ -66,13 +66,15 @@ Without the two `NEXT_PUBLIC_SUPABASE_*` values the app still builds and runs, b
 
 ### Database migrations
 
-Run `supabase-schema.sql`, then the files in `migrations/` in order (RLS leaderboard fix, `last_trade_date`, atomic trade RPCs). `/api/trade` falls back to a non-atomic path if migration 003 is missing.
+Run `supabase-schema.sql`, then the files in `migrations/` in order (RLS leaderboard fix, `last_trade_date`, atomic trade RPCs). Apply migration 003 before enabling trading: `/api/trade` calls its RPCs, and its non-atomic fallback only triggers on Postgres error `42883`, not the `PGRST202` that Supabase usually returns for a missing function.
 
 ### 5. Run Development Server
 
 ```bash
 npm run dev
 ```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Checks
 
@@ -84,8 +86,6 @@ npm run build
 ```
 
 The same checks run in GitHub Actions on every pull request and on `main`.
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Deployment
 
