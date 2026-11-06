@@ -139,7 +139,7 @@ export function DailyChallenge() {
             <div className="flex gap-3">
               {([
                 { key: 'small', label: 'Small (<2%)' },
-                { key: 'medium', label: 'Medium (2–5%)' },
+                { key: 'medium', label: 'Medium (2-5%)' },
                 { key: 'large', label: 'Large (>5%)' },
               ] as const).map(({ key, label }) => (
                 <button
@@ -175,7 +175,7 @@ export function DailyChallenge() {
             </span>{' '}
             with a{' '}
             <span className="text-white">
-              {challenge.sizeGuess === 'small' ? 'small (<2%)' : challenge.sizeGuess === 'medium' ? 'medium (2–5%)' : 'large (>5%)'}
+              {challenge.sizeGuess === 'small' ? 'small (<2%)' : challenge.sizeGuess === 'medium' ? 'medium (2-5%)' : 'large (>5%)'}
             </span>{' '}
             move. Check back tomorrow to see if you were right.
           </p>
@@ -183,7 +183,7 @@ export function DailyChallenge() {
       )}
 
       <p className="text-xs text-gray-600 mt-4">
-        Resets daily at midnight UTC. Predictions are for educational purposes only — not financial advice.
+        Resets daily at midnight UTC. Predictions are for educational purposes only and are not financial advice.
       </p>
     </div>
   )

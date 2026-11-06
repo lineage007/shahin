@@ -41,7 +41,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'first_loss',
     title: 'Learned the Hard Way',
-    description: 'Took a loss — and did not quit. That is how professionals are made.',
+    description: 'Took a loss and kept going.',
     icon: '📉',
     condition: (s) => s.lossCount >= 1,
   },

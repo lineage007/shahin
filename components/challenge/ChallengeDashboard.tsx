@@ -85,7 +85,7 @@ export function ChallengeDashboard() {
       <div>
         <h1 className="text-3xl font-bold mb-2">Prop Challenge</h1>
         <p className="text-gray-400">
-          Paper-mode only. ADGM FSP application in progress — no real-money trading until authorisation.
+          Paper mode only. No real money is accepted, traded or paid out.
         </p>
       </div>
 
@@ -93,11 +93,11 @@ export function ChallengeDashboard() {
       <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex gap-3">
         <AlertTriangle className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
         <div className="text-sm text-yellow-400/90">
-          <p className="font-semibold mb-1">Simulated funded accounts only</p>
+          <p className="font-semibold mb-1">Paper challenges only</p>
           <p>
-            All challenge trading is paper (virtual) capital. Profit splits shown are indicative — they
-            become real only after ADGM authorisation. Crypto markets are highly volatile and this is not
-            financial advice.
+            All challenge trading uses paper (virtual) capital. Fees and profit splits shown are planned
+            figures only and may change. Nothing is charged or paid out. Crypto markets are highly volatile
+            and this is not financial advice.
           </p>
         </div>
       </div>
@@ -125,7 +125,7 @@ export function ChallengeDashboard() {
                     <span className="text-sm font-semibold">Phase {c.phase}</span>
                   </div>
                   <p className="text-xs text-gray-500">
-                    Started {new Date(c.startDate).toLocaleDateString()} — Account $
+                    Started {new Date(c.startDate).toLocaleDateString()} · Account $
                     {c.initialBalance.toLocaleString()}
                   </p>
                   {c.failureReason && (
@@ -253,8 +253,8 @@ function TierSelector() {
     <div className="space-y-4">
       <h2 className="text-xl font-bold">Choose a Challenge Tier</h2>
       <p className="text-sm text-gray-400">
-        Fees shown are indicative for when ADGM authorisation is in place. All trading is currently
-        paper (virtual) only and no payment is required or accepted.
+        Fees shown are planned figures only and may change. All trading is paper (virtual) only and no
+        payment is requested or accepted.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {CHALLENGE_TIERS.map((tier) => (
@@ -279,9 +279,8 @@ function TierSelector() {
               <button
                 disabled
                 className="w-full py-2 bg-gray-700 text-gray-400 rounded-lg text-sm font-semibold cursor-not-allowed"
-                title="Available after ADGM authorisation"
               >
-                Available after ADGM authorisation
+                Not available yet
               </button>
             </div>
           </div>

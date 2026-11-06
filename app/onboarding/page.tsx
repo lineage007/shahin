@@ -119,11 +119,11 @@ export default function OnboardingPage() {
               <div className="text-sm text-yellow-400">
                 <p className="font-semibold mb-1">Important disclosures</p>
                 <ul className="space-y-1 text-yellow-400/80">
-                  <li>This is paper trading only — no real-money execution.</li>
+                  <li>This is paper trading only. No real-money execution.</li>
                   <li>Crypto markets are highly volatile.</li>
                   <li>Past performance does not predict future returns.</li>
                   <li>This is not financial advice.</li>
-                  <li>ADGM FSP application in progress — no real-money trading available until authorisation.</li>
+                  <li>No real money is accepted, traded or paid out.</li>
                 </ul>
               </div>
             </div>
@@ -178,7 +178,7 @@ export default function OnboardingPage() {
       <div className="min-h-screen flex items-center justify-center p-6">
         <div className="max-w-lg w-full space-y-6">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm text-gray-500">Risk education — Question {quizIndex + 1} of {QUIZ.length}</p>
+            <p className="text-sm text-gray-500">Risk education: question {quizIndex + 1} of {QUIZ.length}</p>
             <div className="flex gap-1">
               {QUIZ.map((_, i) => (
                 <div
@@ -231,7 +231,7 @@ export default function OnboardingPage() {
           {revealed && (
             <div className={`p-4 rounded-lg border ${quizAnswers[quizIndex] ? 'border-green-500/30 bg-green-500/5' : 'border-red-500/30 bg-red-500/5'}`}>
               <p className={`font-semibold ${quizAnswers[quizIndex] ? 'text-green-400' : 'text-red-400'}`}>
-                {quizAnswers[quizIndex] ? 'Correct!' : 'Not quite — the correct answer is highlighted.'}
+                {quizAnswers[quizIndex] ? 'Correct!' : 'Not quite. The correct answer is highlighted.'}
               </p>
             </div>
           )}
@@ -257,7 +257,7 @@ export default function OnboardingPage() {
         <h2 className="text-3xl font-bold">Ready to trade</h2>
         <p className="text-gray-400">
           You scored {score}/{QUIZ.length} on the risk quiz.{' '}
-          {score < 3 && 'Review the highlighted answers — understanding risk is essential before trading.'}
+          {score < 3 && 'Review the highlighted answers. Understanding risk is essential before trading.'}
         </p>
         <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg text-left space-y-2">
           <p className="font-semibold text-sm text-gray-300">Your setup</p>
