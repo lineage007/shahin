@@ -21,7 +21,7 @@ A paper trading platform for cryptocurrency markets with live market data, Tradi
 
 ## Tech Stack
 
-- **Frontend**: Next.js 15, React, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 16, React 19, TypeScript, Tailwind CSS 4
 - **Backend**: Supabase (PostgreSQL + Auth)
 - **APIs**: CoinGecko (market data), Binance (order book), TradingView (charts)
 - **Deployment**: Vercel
@@ -51,16 +51,22 @@ npm install
 
 ### 4. Configure Environment Variables
 
-Create `.env.local` in the project root:
+Copy `.env.example` to `.env.local` and fill in the values:
 
 ```env
-# CoinGecko API Key
-NEXT_PUBLIC_COINGECKO_API_KEY=your_coingecko_api_key_here
-
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...   # server only, used by /api/trade
+COINGECKO_API_KEY=...           # server only, optional (public rate limits apply without it)
 ```
+
+Do not use `NEXT_PUBLIC_COINGECKO_API_KEY`: a `NEXT_PUBLIC_` prefix ships the key to the browser.
+
+Without the two `NEXT_PUBLIC_SUPABASE_*` values the app still builds and runs, but sign-in is replaced by an "Accounts are not open yet" notice. The same variables must be set in the Vercel project for production sign-in to work.
+
+### Database migrations
+
+Run `supabase-schema.sql`, then the files in `migrations/` in order (RLS leaderboard fix, `last_trade_date`, atomic trade RPCs). Apply migration 003 before enabling trading: `/api/trade` calls its RPCs, and its non-atomic fallback only triggers on Postgres error `42883`, not the `PGRST202` that Supabase usually returns for a missing function.
 
 ### 5. Run Development Server
 
@@ -70,14 +76,20 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+### Checks
+
+```bash
+npm run lint
+npm run typecheck
+npm test        # vitest
+npm run build
+```
+
+The same checks run in GitHub Actions on every pull request and on `main`.
+
 ## Deployment
 
-### Deploy to Vercel
-
-1. Push your code to GitHub
-2. Import the repository in [Vercel](https://vercel.com)
-3. Add environment variables in Vercel project settings
-4. Deploy!
+The Vercel project `shahin-app` deploys `main` from GitHub automatically (production at https://shahin.app). Ship changes through pull requests to `main`. Avoid `vercel deploy` from a local copy: it bypasses CI and can roll production back to older code.
 
 ### Configure Domain (Cloudflare)
 
