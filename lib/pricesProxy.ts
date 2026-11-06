@@ -18,8 +18,8 @@ export type ProxyTarget = { url: string } | { error: string }
 
 export function buildUpstreamUrl(searchParams: URLSearchParams): ProxyTarget {
   const endpoint = searchParams.get('endpoint') || 'simple/price'
+  if (!Object.hasOwn(ALLOWED_PARAMS, endpoint)) return { error: 'Endpoint not allowed' }
   const allowedParams = ALLOWED_PARAMS[endpoint]
-  if (!allowedParams) return { error: 'Endpoint not allowed' }
 
   const ids = searchParams.get('ids')
   if (!ids) return { error: 'Missing ids' }

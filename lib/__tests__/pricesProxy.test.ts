@@ -22,6 +22,9 @@ describe('buildUpstreamUrl', () => {
     'coins/marketsX',
     'coins/list',
     '../simple/price',
+    'constructor',
+    '__proto__',
+    'toString',
   ])('rejects endpoint %s', (endpoint) => {
     const r = buildUpstreamUrl(q(`endpoint=${encodeURIComponent(endpoint)}&ids=bitcoin`))
     expect(r).toEqual({ error: 'Endpoint not allowed' })
