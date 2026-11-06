@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { getSupabase } from '@/lib/supabase'
+import { getSupabase, isSupabaseConfigured } from '@/lib/supabase'
 import type { User } from '@supabase/supabase-js'
 
 interface AuthContextType {
@@ -17,9 +17,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  // Without Supabase there is no session to wait for.
+  const [loading, setLoading] = useState(isSupabaseConfigured)
 
   useEffect(() => {
+    if (!isSupabaseConfigured()) return
+
     let client
     try {
       client = getSupabase()

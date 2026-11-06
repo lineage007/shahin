@@ -2,6 +2,12 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 let supabaseInstance: SupabaseClient | null = null
 
+// NEXT_PUBLIC_* values are inlined at build time, so this is stable for a
+// given deployment and safe to call during render on server and client.
+export function isSupabaseConfigured(): boolean {
+  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+}
+
 export function getSupabase() {
   if (!supabaseInstance) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
