@@ -49,20 +49,18 @@ export function LoginForm() {
 
   if (!isSupabaseConfigured()) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <div className="w-full max-w-md rounded-2xl border border-gray-800 bg-gray-900/50 p-8 text-center">
-          <h2 className="mb-3 text-xl font-semibold">Accounts are not open yet</h2>
-          <p className="mb-6 text-sm leading-6 text-gray-400">
-            Sign-in and new accounts are not available at the moment, so the trading dashboard cannot be
-            opened. You can read the planned challenge format and rules on the pricing page.
+      <div className="status">
+        <span className="dot" aria-hidden="true" />
+        <div>
+          <p className="status-title">New accounts are paused</p>
+          <p className="status-body">
+            The trading desk and leaderboard are for members, and sign-in is closed for now. The full challenge rules
+            and pricing are public.
           </p>
-          <Link
-            href="/pricing"
-            className="inline-block rounded-lg bg-blue-600 px-5 py-3 font-semibold transition hover:bg-blue-700"
-          >
-            View pricing and rules
-          </Link>
         </div>
+        <Link className="btn btn-line" href="/#rules">
+          Read the rules
+        </Link>
       </div>
     )
   }

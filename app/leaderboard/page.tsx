@@ -6,12 +6,23 @@ export const dynamic = 'force-dynamic'
 
 export default function LeaderboardPage() {
   return (
-    <AuthGuard>
-      <div className="container mx-auto px-4 py-8">
-        <Suspense fallback={<div className="text-center py-20">Loading leaderboard...</div>}>
-          <LeaderboardView />
-        </Suspense>
-      </div>
-    </AuthGuard>
+    <>
+      <section className="wrap page-head">
+        <p className="eyebrow mono">Leaderboard</p>
+        <h1>Ranked on paper.</h1>
+        <p className="lede">
+          Traders who opt in are ranked by the return on their virtual balance. Everyone starts from the same
+          $100,000 in virtual USDT, so the table shows skill and discipline, not account size. There are no prizes and
+          no payouts.
+        </p>
+      </section>
+      <section className="wrap section">
+        <AuthGuard>
+          <Suspense fallback={<p className="muted">Loading leaderboard</p>}>
+            <LeaderboardView />
+          </Suspense>
+        </AuthGuard>
+      </section>
+    </>
   )
 }

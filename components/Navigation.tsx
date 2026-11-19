@@ -4,7 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from './AuthProvider'
-import { LogOut, Menu, TrendingUp, Target, X, type LucideIcon } from 'lucide-react'
+import { LogOut, Menu, Target, X, type LucideIcon } from 'lucide-react'
+import { Mark } from './site/Mark'
 
 type NavLink = { href: string; label: string; icon?: LucideIcon }
 
@@ -16,7 +17,12 @@ const MEMBER_LINKS: NavLink[] = [
   { href: '/pricing', label: 'Pricing' },
 ]
 
-const PUBLIC_LINKS: NavLink[] = [{ href: '/pricing', label: 'Pricing' }]
+const PUBLIC_LINKS: NavLink[] = [
+  { href: '/#how', label: 'How it works' },
+  { href: '/#rules', label: 'Rules' },
+  { href: '/leaderboard', label: 'Leaderboard' },
+  { href: '/pricing', label: 'Pricing' },
+]
 
 export function Navigation() {
   const { user, signOut } = useAuth()
@@ -30,11 +36,11 @@ export function Navigation() {
     }`
 
   return (
-    <nav className="border-b border-gray-800 bg-gray-900/50 backdrop-blur" aria-label="Main">
-      <div className="container mx-auto px-4">
+    <nav className="site-nav" aria-label="Main">
+      <div className="wrap">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-xl font-bold">
-            <TrendingUp className="h-6 w-6 text-blue-500" aria-hidden="true" />
+          <Link href="/" className="brand" aria-label="Shahin home">
+            <Mark size={26} />
             <span>Shahin</span>
           </Link>
 

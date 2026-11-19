@@ -11,7 +11,7 @@ export const baseOpenGraph: NonNullable<Metadata['openGraph']> = {
       url: '/og-image.png',
       width: 1200,
       height: 630,
-      alt: 'Shahin crypto prop trading platform',
+      alt: 'Shahin: crypto paper trading with prop challenge rules',
     },
   ],
   locale: 'en_US',

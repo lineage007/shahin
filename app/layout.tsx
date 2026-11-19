@@ -1,63 +1,44 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import type { Metadata, Viewport } from 'next'
+import { Schibsted_Grotesk, Fragment_Mono } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/components/AuthProvider'
 import { Navigation } from '@/components/Navigation'
+import { Footer } from '@/components/site/Footer'
+import { baseOpenGraph, baseTwitter } from '@/lib/seo'
 
-const inter = Inter({ subsets: ['latin'] })
+const sans = Schibsted_Grotesk({ subsets: ['latin'], variable: '--font-sans', display: 'swap' })
+const mono = Fragment_Mono({ subsets: ['latin'], weight: '400', variable: '--font-mono', display: 'swap' })
+
+const title = 'Shahin: crypto paper trading with prop challenge rules'
+const description =
+  'Paper-trade 20 major cryptocurrencies at live prices with $100,000 in virtual USDT, under two-phase prop challenge rules. Free. No deposits, no fees, no payouts.'
 
 export const metadata: Metadata = {
-  title: 'Shahin - Crypto Prop Trading Challenge',
-  description:
-    'Paper-trade the top cryptocurrencies against live market data. Practice two-phase prop-firm challenge rules with real drawdown, daily-loss, and profit targets. No real money required.',
+  title,
+  description,
   metadataBase: new URL('https://shahin.app'),
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    title: 'Shahin: Crypto Prop Trading Challenge',
-    description:
-      'Trade the top 20 cryptocurrencies with live prices and real prop-firm rules. Paper only. No capital at risk.',
-    url: 'https://shahin.app',
-    siteName: 'Shahin',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Shahin crypto prop trading platform',
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Shahin: Crypto Prop Trading Challenge',
-    description:
-      'Trade top cryptos with live prices and prop-firm rules. Paper mode only.',
-    images: ['/og-image.png'],
-  },
+  applicationName: 'Shahin',
+  alternates: { canonical: '/' },
+  openGraph: { ...baseOpenGraph, title, description, url: 'https://shahin.app' },
+  twitter: { ...baseTwitter, title, description },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export const viewport: Viewport = { themeColor: '#0b0e13', colorScheme: 'dark' }
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.className} bg-gray-950 text-white`}>
+    <html lang="en" className={`dark ${sans.variable} ${mono.variable}`}>
+      <body>
+        <a className="skip" href="#main">Skip to content</a>
         <AuthProvider>
           <Navigation />
-          {/* Persistent risk banner (spec requirement) */}
-          <div className="w-full bg-yellow-900/20 border-b border-yellow-700/30 px-4 py-2 text-center text-xs text-yellow-400/80">
-            Paper trading only. No real money is accepted, traded or paid out. Crypto markets are volatile.
-            This is not financial advice. Past performance does not predict future returns.
-          </div>
-          <main className="min-h-screen">
+          <p className="paper-strip">
+            <span className="mono">PAPER ONLY</span> No real money is deposited, traded or paid out.
+          </p>
+          <main id="main">
             {children}
           </main>
+          <Footer />
         </AuthProvider>
       </body>
     </html>

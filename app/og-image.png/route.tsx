@@ -15,18 +15,18 @@ export function GET() {
           flexDirection: 'column',
           justifyContent: 'center',
           padding: '80px',
-          background: '#030712',
+          background: '#0b0e13',
           color: '#ffffff',
         }}
       >
-        <div style={{ fontSize: 36, color: '#60a5fa', letterSpacing: 4, textTransform: 'uppercase' }}>
+        <div style={{ fontSize: 36, color: '#e9a23b', letterSpacing: 4, textTransform: 'uppercase' }}>
           Shahin
         </div>
         <div style={{ fontSize: 76, fontWeight: 700, marginTop: 24, lineHeight: 1.1 }}>
-          Crypto Prop Trading Challenge
+          Trade the prop challenge on paper.
         </div>
         <div style={{ fontSize: 34, color: '#9ca3af', marginTop: 32 }}>
-          Paper trading with live market data. No real money.
+          Live crypto prices. $100,000 virtual. No real money.
         </div>
       </div>
     ),

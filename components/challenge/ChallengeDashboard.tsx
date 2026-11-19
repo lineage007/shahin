@@ -95,9 +95,8 @@ export function ChallengeDashboard() {
         <div className="text-sm text-yellow-400/90">
           <p className="font-semibold mb-1">Paper challenges only</p>
           <p>
-            All challenge trading uses paper (virtual) capital. Fees and profit splits shown are planned
-            figures only and may change. Nothing is charged or paid out. Crypto markets are highly volatile
-            and this is not financial advice.
+            All challenge trading uses virtual capital. Nothing is charged or paid out. Crypto markets
+            are highly volatile and this is not financial advice.
           </p>
         </div>
       </div>
@@ -253,8 +252,7 @@ function TierSelector() {
     <div className="space-y-4">
       <h2 className="text-xl font-bold">Choose a Challenge Tier</h2>
       <p className="text-sm text-gray-400">
-        Fees shown are planned figures only and may change. All trading is paper (virtual) only and no
-        payment is requested or accepted.
+        Every challenge size is virtual and free. Nothing is charged and nothing is paid out.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {CHALLENGE_TIERS.map((tier) => (
@@ -264,7 +262,6 @@ function TierSelector() {
           >
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-lg">{tier.name}</h3>
-              <span className="text-yellow-400 font-bold">${tier.baseFeeUsd.toLocaleString()}</span>
             </div>
             <div className="space-y-1 text-sm text-gray-400">
               <p>Phase 1: {tier.phase1Rules.profitTargetPercent}% profit in {tier.phase1Rules.maxCalendarDays} days</p>
@@ -273,7 +270,6 @@ function TierSelector() {
               )}
               <p>Max drawdown: {tier.phase1Rules.maxDrawdownPercent}%</p>
               <p>Daily loss limit: {tier.phase1Rules.dailyLossLimitPercent}%</p>
-              <p>Profit split: {tier.profitSplit}% to trader</p>
             </div>
             <div className="pt-2">
               <button
